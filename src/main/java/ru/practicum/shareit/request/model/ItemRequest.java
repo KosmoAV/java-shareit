@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request.dto;
+package ru.practicum.shareit.request.model;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @Builder
-public class ItemRequestDto {
+public class ItemRequest {
 
     @Min(1)
     private long id;
