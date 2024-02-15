@@ -7,7 +7,7 @@ public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
 
         if (item == null) {
-            return null;
+            throw new IllegalArgumentException("Parameter item in method toItemDto must be non-null");
         }
 
         return ItemDto.builder()
@@ -23,7 +23,7 @@ public class ItemMapper {
     public static Item toItem(ItemDto itemDto) {
 
         if (itemDto == null) {
-            return null;
+            throw new IllegalArgumentException("Parameter itemDto in method toItem must be non-null");
         }
 
         return Item.builder()

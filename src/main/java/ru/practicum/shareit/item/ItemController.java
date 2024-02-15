@@ -122,7 +122,7 @@ public class ItemController {
         }
     }
 
-    public void validateDescription(String description) throws ValidationException {
+    private void validateDescription(String description) throws ValidationException {
 
         if (description == null || description.isBlank()) {
 
@@ -130,7 +130,7 @@ public class ItemController {
         }
     }
 
-    public void validateAvailable(Boolean available) throws ValidationException {
+    private void validateAvailable(Boolean available) throws ValidationException {
 
         if (available == null) {
 

@@ -101,7 +101,7 @@ public class UserController {
         }
     }
 
-    public void validateEmail(String email) throws ValidationException {
+    private void validateEmail(String email) throws ValidationException {
 
         if (email == null || email.isBlank() || email.contains(" ") ||
                 email.split("@").length != 2 || email.split("@")[1].split("\\.").length != 2) {
