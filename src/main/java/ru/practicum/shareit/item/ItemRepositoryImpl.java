@@ -101,7 +101,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     private void validItemsNotRegistration(long ownerId) {
 
-        Map<Long, Item> itemMap= items.get(ownerId);
+        Map<Long, Item> itemMap = items.get(ownerId);
 
         if (itemMap == null) {
             throw new DataException("Items for owner id = " + ownerId + " does not exist");
