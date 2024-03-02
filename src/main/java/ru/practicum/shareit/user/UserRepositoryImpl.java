@@ -70,7 +70,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private void validEmailRegistered(String email) throws IllegalArgumentException {
 
-        boolean registered = users.values().stream()
+        boolean registered = (email != null) && users.values().stream()
                 .map(User::getEmail)
                 .anyMatch(userEmail -> userEmail.equals(email));
 

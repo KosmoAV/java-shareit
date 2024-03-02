@@ -2,12 +2,14 @@ package ru.practicum.shareit.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.DataException;
-import ru.practicum.shareit.exception.ValidationException;
+
+import javax.validation.ConstraintViolationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -20,7 +22,7 @@ public class ErrorHandler {
         log.info("Get MissingRequestHeaderException from {}", exception.getParameter());
 
         return new ErrorResponse("Missing header parameter",
-                             "Parameter name '" + exception.getHeaderName() + "'");
+                "Parameter name '" + exception.getHeaderName() + "'");
     }
 
     @ExceptionHandler
@@ -35,7 +37,17 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handle(final ValidationException exception) {
+    public ErrorResponse handle(final MethodArgumentNotValidException exception) {
+
+        log.info("Get ValidationException: {}", exception.getParameter());
+
+        return new ErrorResponse("Validation failed",
+                exception.getParameter().getParameterName());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handle(final ConstraintViolationException exception) {
 
         log.info("Get ValidationException: {}", exception.getMessage());
 
