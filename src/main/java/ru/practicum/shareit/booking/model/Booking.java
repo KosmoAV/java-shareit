@@ -1,11 +1,11 @@
-package ru.practicum.shareit.booking.dto;
+package ru.practicum.shareit.booking.model;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class BookingDto {
+public class Booking {
 
     private long id;
 
@@ -17,7 +17,7 @@ public class BookingDto {
 
     private long booker;
 
-    private BookingDto.Status status;
+    private Status status;
 
     enum Status {
         WAITING,
