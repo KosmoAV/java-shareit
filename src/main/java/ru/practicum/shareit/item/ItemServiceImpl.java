@@ -24,7 +24,7 @@ public class ItemServiceImpl implements ItemService {
 
         validUser(itemDto.getOwner());
 
-        Item item = itemRepository.addItem(ItemMapper.toItem(itemDto));
+        Item item = itemRepository.save(ItemMapper.toItem(itemDto));
         return ItemMapper.toItemDto(item);
     }
 
@@ -33,8 +33,24 @@ public class ItemServiceImpl implements ItemService {
 
         validUser(itemDto.getOwner());
 
-        Item item = itemRepository.updateItem(ItemMapper.toItem(itemDto));
-        return ItemMapper.toItemDto(item);
+        Item newItem = ItemMapper.toItem(itemDto);
+
+        Item item = itemRepository.findById(newItem.getId())
+                .orElseThrow(() -> new DataException("Item with id = " + newItem.getId() + " not found"));
+
+        if (newItem.getName() != null) {
+            item.setName(newItem.getName());
+        }
+
+        if (newItem.getDescription() != null) {
+            item.setDescription(newItem.getDescription());
+        }
+
+        if (newItem.getAvailable() != null) {
+            item.setAvailable(newItem.getAvailable());
+        }
+
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -42,7 +58,8 @@ public class ItemServiceImpl implements ItemService {
 
         validUser(userId);
 
-        return ItemMapper.toItemDto(itemRepository.getItem(itemId));
+        return ItemMapper.toItemDto(itemRepository.findById(itemId)
+                .orElseThrow(() -> new DataException("Item with id = " + itemId + " not found")));
     }
 
     @Override
@@ -50,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
 
         validUser(ownerId);
 
-        return itemRepository.getItems(ownerId).stream()
+        return itemRepository.findByOwner(ownerId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -60,14 +77,14 @@ public class ItemServiceImpl implements ItemService {
 
         validUser(userId);
 
-        return itemRepository.searchItems(text.toLowerCase()).stream()
+        return itemRepository.findByNameOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
     private void validUser(long userId) {
 
-        if (userRepository.getUser(userId) == null) {
+        if (!userRepository.existsById(userId)) {
             throw new DataException("User with id = " + userId + " not found");
         }
     }

@@ -33,9 +33,9 @@ public class UserController {
     public UserDto updateUser(@RequestBody @Validated(OnPatch.class) UserDto userDto,
                               @PathVariable @Positive long userId) {
 
-        log.info("Call 'updateUser': {}", userDto);
-
         userDto.setId(userId);
+
+        log.info("Call 'updateUser': {}", userDto);
 
         return userService.updateUser(userDto);
     }

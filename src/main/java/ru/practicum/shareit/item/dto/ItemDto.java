@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.group.OnPatch;
 import ru.practicum.shareit.group.OnPost;
@@ -11,7 +10,6 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Data
-@Builder
 public class ItemDto {
 
     private Long id;
@@ -32,6 +30,5 @@ public class ItemDto {
     @Positive(groups = {OnPost.class, OnPatch.class})
     private Long owner;
 
-    @Builder.Default
     private Long request = null;
 }
