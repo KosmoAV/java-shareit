@@ -83,7 +83,8 @@ public class ItemServiceImpl implements ItemService {
             nextBooking = bookingRepository.findNextBookingItem(itemId, Status.APPROVED.ordinal());
         }
 
-        List<Comment> comments = commentRepository.findByItemId(itemId);
+        //List<Comment> comments = commentRepository.findByItemId(itemId);
+        List<Comment> comments = commentRepository.findAll();
         List<ResponseCommentDto> commentDto = CommentMapper.toResponseCommentDto(comments);
 
         return ItemMapper.toResponseItemDto(item, lastBooking, nextBooking, commentDto);

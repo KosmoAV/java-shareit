@@ -21,7 +21,7 @@ public class CommentMapper {
 
         responseCommentDto.setId(comment.getId());
         responseCommentDto.setText(comment.getText());
-        responseCommentDto.setAuthorName(comment.getUser().getName());
+        responseCommentDto.setAuthorName(comment.getAuthor().getName());
         responseCommentDto.setCreated(comment.getCreated());
 
         return responseCommentDto;
@@ -49,7 +49,7 @@ public class CommentMapper {
         comment.setId(createCommentDto.getId());
         comment.setText(createCommentDto.getText());
         comment.setItem(item);
-        comment.setUser(author);
+        comment.setAuthor(author);
         comment.setCreated(LocalDateTime.now());
 
         return comment;
