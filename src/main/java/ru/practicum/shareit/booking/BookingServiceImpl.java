@@ -33,7 +33,7 @@ public class BookingServiceImpl implements BookingService {
         validDates(createBookingDto.getStart(), createBookingDto.getEnd());
 
         Item item = getItemIfAvailable(createBookingDto.getItemId());
-        if(item.getOwnerId() == createBookingDto.getBookerId()) {
+        if (item.getOwnerId() == createBookingDto.getBookerId()) {
             throw new DataNotFoundException("Owner can not booking item");
         }
 
@@ -90,8 +90,7 @@ public class BookingServiceImpl implements BookingService {
             return BookingMapper.toResponseBookingDto(bookingList);
         }
 
-        switch (state)
-        {
+        switch (state) {
             case CURRENT:
                 bookingList = bookingRepository.findByBookerIdWithCurrentState(bookerId);
             break;
@@ -122,8 +121,7 @@ public class BookingServiceImpl implements BookingService {
 
         List<Booking> bookingList;
 
-        switch (state)
-        {
+        switch (state) {
             case CURRENT:
                 bookingList = bookingRepository.findByItemOwnerIdWithCurrentState(ownerId);
                 break;
@@ -160,8 +158,8 @@ public class BookingServiceImpl implements BookingService {
 
     private User getUser(long userId) {
 
-        return userRepository.findById(userId).
-                orElseThrow(() -> new DataNotFoundException("User with id = " + userId + " not found"));
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User with id = " + userId + " not found"));
     }
 
     private Item getItemIfAvailable(long itemId) {

@@ -3,6 +3,7 @@ package ru.practicum.shareit.exception;
 public class DataBadRequestException extends RuntimeException {
 
     private String errorMessage;
+
     public DataBadRequestException(String errorMessage, String description) {
         super(description);
         this.errorMessage = errorMessage;

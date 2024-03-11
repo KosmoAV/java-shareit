@@ -19,26 +19,26 @@ public class ResponseItemDto {
 
     private Long request = null;
 
-    private innerBookingDto lastBooking = null;
+    private InnerBookingDto lastBooking = null;
 
-    private innerBookingDto nextBooking = null;
+    private InnerBookingDto nextBooking = null;
 
     private List<ResponseCommentDto> comments;
 
     public void setLastBooking(long id, long bookerId) {
-        lastBooking = new innerBookingDto();
+        lastBooking = new InnerBookingDto();
         lastBooking.setId(id);
         lastBooking.setBookerId(bookerId);
     }
 
     public void setNextBooking(long id, long bookerId) {
-        nextBooking = new innerBookingDto();
+        nextBooking = new InnerBookingDto();
         nextBooking.setId(id);
         nextBooking.setBookerId(bookerId);
     }
 
     @Data
-    private class innerBookingDto {
+    private class InnerBookingDto {
         private long id;
         private long bookerId;
     }
