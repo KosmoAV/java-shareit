@@ -24,7 +24,7 @@ public class Comment {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    private User user;
 
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
