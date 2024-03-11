@@ -2,7 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.DataException;
+import ru.practicum.shareit.exception.DataNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.interfaces.UserRepository;
 import ru.practicum.shareit.user.interfaces.UserService;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         User newUser = UserMapper.toUser(userDto);
 
         User user = userRepository.findById(newUser.getId())
-                .orElseThrow(() -> new DataException("User with id = " + newUser.getId() + " not found"));
+                .orElseThrow(() -> new DataNotFoundException("User with id = " + newUser.getId() + " not found"));
 
         if (newUser.getName() != null) {
             user.setName(newUser.getName());
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getUser(long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new DataException("User with id = " + userId + " not found"));
+                .orElseThrow(() -> new DataNotFoundException("User with id = " + userId + " not found"));
 
         return UserMapper.toUserDto(user);
     }

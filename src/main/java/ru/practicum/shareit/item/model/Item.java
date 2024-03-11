@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -23,11 +22,11 @@ public class Item {
     @Column(name = "available", nullable = false)
     private Boolean available;
 
-    @Column(name = "owner", nullable = false)
-    private Long owner;
+    @Column(name = "owner_id", nullable = false)
+    private Long ownerId;
 
-    @Column(name = "request")
-    private Long request = null;
+    @Column(name = "request_id")
+    private Long requestId = null;
 
     @Override
     public boolean equals(Object o) {

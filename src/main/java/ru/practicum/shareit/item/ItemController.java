@@ -6,7 +6,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.group.OnPatch;
 import ru.practicum.shareit.group.OnPost;
+import ru.practicum.shareit.item.dto.CreateCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ResponseCommentDto;
+import ru.practicum.shareit.item.dto.ResponseItemDto;
 import ru.practicum.shareit.item.interfaces.ItemService;
 
 import javax.validation.constraints.Positive;
@@ -33,6 +36,19 @@ public class ItemController {
         return itemService.addItem(itemDto);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public ResponseCommentDto addComment(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
+                                         @PathVariable @Positive long itemId,
+                                         @RequestBody @Validated CreateCommentDto createCommentDto) {
+
+        log.info("Call 'addComment': userId = {}, {}", userId, createCommentDto);
+
+        createCommentDto.setItemId(itemId);
+        createCommentDto.setAuthorId(userId);
+
+        return itemService.addComment(createCommentDto);
+    }
+
     @PatchMapping(value = "/{itemId}")
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") @Positive long ownerId,
                               @PathVariable @Positive long itemId,
@@ -47,8 +63,8 @@ public class ItemController {
     }
 
     @GetMapping(value = "/{itemId}")
-    public ItemDto getItem(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
-                           @PathVariable @Positive long itemId) {
+    public ResponseItemDto getItem(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
+                                   @PathVariable @Positive long itemId) {
 
         log.info("Call 'getItem': userId = {}, itemId = {}", userId, itemId);
 
@@ -56,7 +72,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") @Positive long ownerId) {
+    public List<ResponseItemDto> getItems(@RequestHeader("X-Sharer-User-Id") @Positive long ownerId) {
 
         log.info("Call 'getItems': userId = {}", ownerId);
 

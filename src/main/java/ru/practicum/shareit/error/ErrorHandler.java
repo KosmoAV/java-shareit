@@ -8,7 +8,8 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.DataException;
+import ru.practicum.shareit.exception.DataBadRequestException;
+import ru.practicum.shareit.exception.DataNotFoundException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -32,7 +33,7 @@ public class ErrorHandler {
 
         log.info("Get IllegalArgumentException, {}", exception.getMessage());
 
-        return new ErrorResponse("Illegal argument",
+        return new ErrorResponse(exception.getMessage(),
                 exception.getMessage());
     }
 
@@ -58,11 +59,20 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handle(final DataException exception) {
+    public ErrorResponse handle(final DataNotFoundException exception) {
 
-        log.info("Get ExistException {}", exception.getMessage());
+        log.info("Get DataNotFoundException {}", exception.getMessage());
 
         return new ErrorResponse("Link error", exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handle(final DataBadRequestException exception) {
+
+        log.info("Get DataBadRequestException {}", exception.getMessage());
+
+        return new ErrorResponse(exception.getErrorMessage(), exception.getMessage());
     }
 
     @ExceptionHandler
