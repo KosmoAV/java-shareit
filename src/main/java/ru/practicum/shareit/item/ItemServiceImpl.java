@@ -20,6 +20,7 @@ import ru.practicum.shareit.user.interfaces.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,17 +76,20 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new DataNotFoundException("Item with id = " + itemId + " not found"));
 
+        return new ResponseItemDto();
+/*
         Booking lastBooking = null;
         Booking nextBooking = null;
-/*
+
         if (item.getOwnerId() == userId) {
             lastBooking = bookingRepository.findLastBookingItem(itemId, Status.APPROVED.ordinal());
             nextBooking = bookingRepository.findNextBookingItem(itemId, Status.APPROVED.ordinal());
         }
-*/
+
         List<Comment> comments = commentRepository.findByItemId(itemId);
 
         return ItemMapper.toResponseItemDto(item, lastBooking, nextBooking, CommentMapper.toResponseCommentDto(comments));
+        */
     }
 
     @Override
