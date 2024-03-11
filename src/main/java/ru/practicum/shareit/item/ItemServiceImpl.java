@@ -86,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<Comment> comments = commentRepository.findByItemId(itemId);
 
-        List<ResponseCommentDto> commentDto= CommentMapper.toResponseCommentDto(comments);
+        List<ResponseCommentDto> commentDto = CommentMapper.toResponseCommentDto(comments);
 
         return new ResponseItemDto();
                 //ItemMapper.toResponseItemDto(item, lastBooking, nextBooking, CommentMapper.toResponseCommentDto(comments));
