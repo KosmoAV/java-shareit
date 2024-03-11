@@ -20,7 +20,7 @@ import ru.practicum.shareit.user.interfaces.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,7 +86,10 @@ public class ItemServiceImpl implements ItemService {
 
         List<Comment> comments = commentRepository.findByItemId(itemId);
 
-        return ItemMapper.toResponseItemDto(item, lastBooking, nextBooking, new ArrayList<>());
+        List<ResponseCommentDto> commentDto= CommentMapper.toResponseCommentDto(comments);
+
+        return new ResponseItemDto();
+                //ItemMapper.toResponseItemDto(item, lastBooking, nextBooking, CommentMapper.toResponseCommentDto(comments));
 
     }
 
