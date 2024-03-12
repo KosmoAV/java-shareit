@@ -15,7 +15,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 256)
+    @Column(name = "text", nullable = false, length = 256)
     private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)

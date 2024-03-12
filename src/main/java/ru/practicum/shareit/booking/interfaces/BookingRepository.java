@@ -13,7 +13,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     public List<Booking> findByBookerIdOrderByStartDesc(long bookerId);
 
     @Query(value = "SELECT b FROM Booking AS b WHERE b.booker.id = ?1 AND " +
-            "b.start < CURRENT_TIMESTAMP AND b.end > CURRENT_TIMESTAMP ORDER BY b.start")
+            "b.start < CURRENT_TIMESTAMP AND b.end > CURRENT_TIMESTAMP ORDER BY b.start DESC")
     public List<Booking> findByBookerIdWithCurrentState(long bookerId);
 
     @Query(value = "SELECT b FROM Booking AS b WHERE b.booker.id = ?1 AND " +
