@@ -125,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
                         .filter(comment -> comment.getItem().getId().equals(item.getId()))
                         .collect(Collectors.toList());
 
-                    List <Booking> bookingList = bookingListMap.get(item.getId());
+                    List<Booking> bookingList = bookingListMap.get(item.getId());
 
                     if (bookingList == null) {
                         return ItemMapper.toResponseItemDto(item, null, null,
