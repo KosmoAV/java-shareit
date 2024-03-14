@@ -20,7 +20,7 @@ import ru.practicum.shareit.user.interfaces.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,6 +92,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ResponseItemDto> getItems(long ownerId) {
 
+        LocalDateTime now = LocalDateTime.now();
+
         validUser(ownerId);
 
         List<Item> items = itemRepository.findByOwnerId(ownerId);
@@ -99,6 +101,20 @@ public class ItemServiceImpl implements ItemService {
         List<Long> itemsId = items.stream()
                 .map(Item::getId)
                 .collect(Collectors.toList());
+
+        List<Booking> bookings = bookingRepository.findByItemIdAndStatusOrderByStart(itemsId, Status.APPROVED);
+        Map<Long, List<Booking>> bookingListMap = new HashMap<>();
+
+        for (Booking booking : bookings) {
+
+            long itemId = booking.getItem().getId();
+
+            if (bookingListMap.get(itemId) == null) {
+                bookingListMap.put(itemId, new ArrayList<>(List.of(booking)));
+            } else {
+                bookingListMap.get(itemId).add(booking);
+            }
+        }
 
         List<Comment> comments = commentRepository.findByItemsId(itemsId);
 
@@ -109,10 +125,25 @@ public class ItemServiceImpl implements ItemService {
                         .filter(comment -> comment.getItem().getId().equals(item.getId()))
                         .collect(Collectors.toList());
 
-                    return ItemMapper.toResponseItemDto(item,
-                    bookingRepository.findLastBookingItem(item.getId(), Status.APPROVED.ordinal()),
-                    bookingRepository.findNextBookingItem(item.getId(), Status.APPROVED.ordinal()),
-                    CommentMapper.toResponseCommentDto(commentForItem));
+                    List <Booking> bookingList = bookingListMap.get(item.getId());
+
+                    if (bookingList == null) {
+                        return ItemMapper.toResponseItemDto(item, null, null,
+                                CommentMapper.toResponseCommentDto(commentForItem));
+                    }
+
+                    Booking nextBooking = bookingList.stream()
+                            .filter(booking -> booking.getStart().isAfter(now))
+                            .findFirst().orElse(null);
+
+                    Collections.reverse(bookingList);
+
+                    Booking lastBooking = bookingList.stream()
+                            .filter(booking -> booking.getStart().isBefore(now))
+                            .findFirst().orElse(null);
+
+                    return ItemMapper.toResponseItemDto(item, lastBooking, nextBooking,
+                                CommentMapper.toResponseCommentDto(commentForItem));
 
                 })
                 .collect(Collectors.toList());

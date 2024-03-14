@@ -30,6 +30,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseBookingDto addBooking(CreateBookingDto createBookingDto) {
 
+        createBookingDto.setStatus(Status.WAITING);
+
         validDates(createBookingDto.getStart(), createBookingDto.getEnd());
 
         Item item = getItemIfAvailable(createBookingDto.getItemId());
@@ -79,7 +81,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<ResponseBookingDto> getAllBooking(long bookerId, State state) {
+    public List<ResponseBookingDto> getAllBooking(long bookerId, String stringState) {
+
+        State state = getState(stringState);
 
         getUser(bookerId);
 
@@ -115,7 +119,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<ResponseBookingDto> getAllOwnerBooking(long ownerId, State state) {
+    public List<ResponseBookingDto> getAllOwnerBooking(long ownerId, String stringState) {
+
+        State state = getState(stringState);
 
         getUser(ownerId);
 
@@ -178,5 +184,15 @@ public class BookingServiceImpl implements BookingService {
 
         return bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new DataNotFoundException("Booking id = " + bookingId + " not found"));
+    }
+
+    private State getState(String state) {
+
+        try {
+            return State.valueOf(state);
+
+        } catch (IllegalArgumentException e) {
+            throw new DataBadRequestException("Unknown state: " + state, e.getMessage());
+        }
     }
 }

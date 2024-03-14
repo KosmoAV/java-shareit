@@ -6,10 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.booking.dto.ResponseBookingDto;
-import ru.practicum.shareit.booking.model.State;
-import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.interfaces.BookingService;
-import ru.practicum.shareit.exception.DataBadRequestException;
 import ru.practicum.shareit.group.OnPost;
 
 import javax.validation.constraints.Positive;
@@ -31,7 +28,6 @@ public class BookingController {
         log.info("Call 'addBooking': bookerId = {}, {}", bookerId, createBookingDto);
 
         createBookingDto.setBookerId(bookerId);
-        createBookingDto.setStatus(Status.WAITING);
 
         return bookingService.addBooking(createBookingDto);
     }
@@ -41,12 +37,16 @@ public class BookingController {
                                       @PathVariable @Positive long bookingId,
                                       @RequestParam boolean approved) {
 
+        log.info("Call 'approveBooking': ownerId = {}, bookingId = {}, approved = {}", ownerId, bookingId, approved);
+
         return bookingService.approveBooking(ownerId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")
     ResponseBookingDto getBooking(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
                                   @PathVariable @Positive long bookingId) {
+
+        log.info("Call 'getBooking': userId = {}, bookingId = {}", userId, bookingId);
 
         return bookingService.getBooking(userId, bookingId);
     }
@@ -55,29 +55,17 @@ public class BookingController {
     List<ResponseBookingDto> getAllBooking(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
                                            @RequestParam(defaultValue = "ALL") String state) {
 
-        State enumState;
+        log.info("Call 'getAllBooking': userId = {}, state = {}", userId, state);
 
-        try {
-            enumState = State.valueOf(state);
-        } catch (IllegalArgumentException e) {
-            throw new DataBadRequestException("Unknown state: " + state, e.getMessage());
-        }
-
-        return bookingService.getAllBooking(userId, enumState);
+        return bookingService.getAllBooking(userId, state);
     }
 
     @GetMapping("/owner")
     List<ResponseBookingDto> getAllOwnerBooking(@RequestHeader("X-Sharer-User-Id") @Positive long ownerId,
                                            @RequestParam(defaultValue = "ALL") String state) {
 
-        State enumState;
+        log.info("Call 'getAllBooking': ownerId = {}, state = {}", ownerId, state);
 
-        try {
-            enumState = State.valueOf(state);
-        } catch (IllegalArgumentException e) {
-            throw new DataBadRequestException("Unknown state: " + state, e.getMessage());
-        }
-
-        return bookingService.getAllOwnerBooking(ownerId, enumState);
+        return bookingService.getAllOwnerBooking(ownerId, state);
     }
 }
