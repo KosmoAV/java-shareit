@@ -2,39 +2,40 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.group.OnPatch;
+import ru.practicum.shareit.group.OnPost;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.interfaces.UserService;
+
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping
-    public UserDto addUser(@RequestBody UserDto userDto) {
+    public UserDto addUser(@RequestBody @Validated(OnPost.class) UserDto userDto) {
 
         log.info("Call 'addUser': {}", userDto);
-
-        validate(userDto, true);
 
         return userService.addUser(userDto);
     }
 
     @PatchMapping(value = "/{userId}")
-    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable long userId) {
-
-        log.info("Call 'updateUser': {}", userDto);
-
-        validateId(userId);
-        validate(userDto, false);
+    public UserDto updateUser(@RequestBody @Validated(OnPatch.class) UserDto userDto,
+                              @PathVariable @Positive long userId) {
 
         userDto.setId(userId);
+
+        log.info("Call 'updateUser': {}", userDto);
 
         return userService.updateUser(userDto);
     }
@@ -48,65 +49,18 @@ public class UserController {
     }
 
     @GetMapping(value = "/{userId}")
-    public UserDto getUser(@PathVariable long userId) {
+    public UserDto getUser(@PathVariable @Positive long userId) {
 
         log.info("Call 'getUser': userId={}", userId);
-
-        validateId(userId);
 
         return userService.getUser(userId);
     }
 
     @DeleteMapping(value = "/{userId}")
-    public void removeUser(@PathVariable long userId) {
+    public void removeUser(@PathVariable @Positive long userId) {
 
         log.info("Call 'removeUser': userId={}", userId);
 
         userService.removeUser(userId);
-    }
-
-    private void validate(UserDto userDto, boolean allFieldRequired) throws ValidationException {
-
-        if (allFieldRequired) {
-
-            validateName(userDto.getName());
-            validateEmail(userDto.getEmail());
-
-        } else {
-
-            if (userDto.getName() == null && userDto.getEmail() == null) {
-                throw new ValidationException("At least one field of user must be non-null");
-            }
-
-            if (userDto.getName() != null) {
-                validateName(userDto.getName());
-            }
-
-            if (userDto.getEmail() != null) {
-                validateEmail(userDto.getEmail());
-            }
-        }
-    }
-
-    private void validateId(Long id) throws ValidationException {
-        if (id < 1) {
-            throw new ValidationException("Incorrect user id '" + id + "'");
-        }
-    }
-
-    private void validateName(String name) throws ValidationException {
-
-        if (name == null || name.isBlank() || name.contains(" ")) {
-            throw new ValidationException("Incorrect user name '" + name + "'");
-        }
-    }
-
-    private void validateEmail(String email) throws ValidationException {
-
-        if (email == null || email.isBlank() || email.contains(" ") ||
-                email.split("@").length != 2 || email.split("@")[1].split("\\.").length != 2) {
-
-            throw new ValidationException("Incorrect user email '" + email + "'");
-        }
     }
 }

@@ -2,10 +2,17 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.group.OnPatch;
+import ru.practicum.shareit.group.OnPost;
+import ru.practicum.shareit.item.dto.CreateCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ResponseCommentDto;
+import ru.practicum.shareit.item.dto.ResponseItemDto;
 import ru.practicum.shareit.item.interfaces.ItemService;
+
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,34 +20,41 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
+@Validated
 public class ItemController {
 
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") long ownerId,
-                           @RequestBody ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") @Positive long ownerId,
+                           @RequestBody @Validated(OnPost.class) ItemDto itemDto) {
 
         log.info("Call 'addItem': ownerId = {}, {}", ownerId, itemDto);
-
-        validateId(ownerId);
-        validate(itemDto, true);
 
         itemDto.setOwner(ownerId);
 
         return itemService.addItem(itemDto);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public ResponseCommentDto addComment(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
+                                         @PathVariable @Positive long itemId,
+                                         @RequestBody @Validated CreateCommentDto createCommentDto) {
+
+        log.info("Call 'addComment': userId = {}, {}", userId, createCommentDto);
+
+        createCommentDto.setItemId(itemId);
+        createCommentDto.setAuthorId(userId);
+
+        return itemService.addComment(createCommentDto);
+    }
+
     @PatchMapping(value = "/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long ownerId,
-                              @PathVariable long itemId,
-                              @RequestBody ItemDto itemDto) {
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") @Positive long ownerId,
+                              @PathVariable @Positive long itemId,
+                              @RequestBody @Validated(OnPatch.class) ItemDto itemDto) {
 
         log.info("Call 'updateItem': userId = {}, itemId = {}, {}", ownerId, itemId, itemDto);
-
-        validateId(ownerId);
-        validateId(itemId);
-        validate(itemDto, false);
 
         itemDto.setOwner(ownerId);
         itemDto.setId(itemId);
@@ -49,19 +63,16 @@ public class ItemController {
     }
 
     @GetMapping(value = "/{itemId}")
-    public ItemDto getItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                           @PathVariable long itemId) {
+    public ResponseItemDto getItem(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
+                                   @PathVariable @Positive long itemId) {
 
         log.info("Call 'getItem': userId = {}, itemId = {}", userId, itemId);
-
-        validateId(userId);
-        validateId(itemId);
 
         return itemService.getItem(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long ownerId) {
+    public List<ResponseItemDto> getItems(@RequestHeader("X-Sharer-User-Id") @Positive long ownerId) {
 
         log.info("Call 'getItems': userId = {}", ownerId);
 
@@ -69,7 +80,7 @@ public class ItemController {
     }
 
     @GetMapping(value = "/search")
-    public List<ItemDto> searchItems(@RequestHeader("X-Sharer-User-Id") long userId,
+    public List<ItemDto> searchItems(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
                                      @RequestParam(required = true) String text) {
 
         log.info("Call 'searchItems': userId = {}, text = '{}'", userId, text);
@@ -79,62 +90,5 @@ public class ItemController {
         }
 
         return itemService.searchItems(userId, text);
-    }
-
-    private void validate(ItemDto itemDto, boolean allFieldRequired) throws ValidationException {
-
-        if (allFieldRequired) {
-
-            validateName(itemDto.getName());
-            validateDescription(itemDto.getDescription());
-            validateAvailable(itemDto.getAvailable());
-
-        } else {
-
-            if (itemDto.getName() == null && itemDto.getDescription() == null && itemDto.getAvailable() == null) {
-                throw new ValidationException("At least one field of item must be non-null");
-            }
-
-            if (itemDto.getName() != null) {
-                validateName(itemDto.getName());
-            }
-
-            if (itemDto.getDescription() != null) {
-                validateDescription(itemDto.getDescription());
-            }
-
-            if (itemDto.getAvailable() != null) {
-                validateAvailable(itemDto.getAvailable());
-            }
-        }
-    }
-
-    private void validateId(Long id) throws ValidationException {
-        if (id < 1) {
-            throw new ValidationException("Incorrect id '" + id + "'");
-        }
-    }
-
-    private void validateName(String name) throws ValidationException {
-
-        if (name == null || name.isBlank()) {
-            throw new ValidationException("Incorrect item name '" + name + "'");
-        }
-    }
-
-    private void validateDescription(String description) throws ValidationException {
-
-        if (description == null || description.isBlank()) {
-
-            throw new ValidationException("Incorrect item description '" + description + "'");
-        }
-    }
-
-    private void validateAvailable(Boolean available) throws ValidationException {
-
-        if (available == null) {
-
-            throw new ValidationException("Incorrect item available 'null'");
-        }
     }
 }
