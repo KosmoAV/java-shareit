@@ -1,10 +1,6 @@
 package ru.practicum.shareit.request;
 
-import ru.practicum.shareit.item.dto.CreateCommentDto;
-import ru.practicum.shareit.item.dto.ResponseCommentDto;
 import ru.practicum.shareit.item.dto.ResponseRequestItemDto;
-import ru.practicum.shareit.item.model.Comment;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.CreateRequestDto;
 import ru.practicum.shareit.request.dto.ResponseRequestDto;
 import ru.practicum.shareit.request.model.Request;
@@ -14,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class RequestMapper {
 

@@ -14,7 +14,6 @@ import ru.practicum.shareit.exception.DataBadRequestException;
 import ru.practicum.shareit.exception.DataNotFoundException;
 import ru.practicum.shareit.item.interfaces.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.interfaces.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
