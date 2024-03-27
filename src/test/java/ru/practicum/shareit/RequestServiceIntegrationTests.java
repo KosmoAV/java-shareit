@@ -130,6 +130,7 @@ public class RequestServiceIntegrationTests {
 
         return dto;
     }
+
     private UserDto makeUserDto(String name, String email) {
 
         UserDto dto = new UserDto();

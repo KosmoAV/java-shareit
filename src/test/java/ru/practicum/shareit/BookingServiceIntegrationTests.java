@@ -54,6 +54,7 @@ public class BookingServiceIntegrationTests {
         entityManager.persist(user);
         entityManager.flush();
     }
+
     @Test
     public void addBookingTest() {
 
