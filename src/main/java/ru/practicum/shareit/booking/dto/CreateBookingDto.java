@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 public class CreateBookingDto {
 
-    private long id;
+    private Long id;
 
     @NotNull(groups = OnPost.class)
     @FutureOrPresent(groups = {OnPost.class, OnPatch.class})

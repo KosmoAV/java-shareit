@@ -16,6 +16,8 @@ import ru.practicum.shareit.item.interfaces.ItemRepository;
 import ru.practicum.shareit.item.interfaces.ItemService;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.interfaces.RequestRepository;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.interfaces.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -31,13 +33,24 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public ItemDto addItem(ItemDto itemDto) {
 
         validUser(itemDto.getOwner());
 
-        Item item = itemRepository.save(ItemMapper.toItem(itemDto));
+        Long requestId = itemDto.getRequestId();
+        Item item;
+
+        if (requestId != null) {
+            Request request = requestRepository.findById(requestId)
+                    .orElseThrow(() -> new DataNotFoundException("Request with id = " + requestId + " not found"));
+
+            item = itemRepository.save(ItemMapper.toItem(itemDto, request));
+        } else {
+            item = itemRepository.save(ItemMapper.toItem(itemDto, null));
+        }
 
         return ItemMapper.toItemDto(item);
     }
@@ -47,21 +60,19 @@ public class ItemServiceImpl implements ItemService {
 
         validUser(itemDto.getOwner());
 
-        Item newItem = ItemMapper.toItem(itemDto);
+        Item item = itemRepository.findById(itemDto.getId())
+                .orElseThrow(() -> new DataNotFoundException("Item with id = " + itemDto.getId() + " not found"));
 
-        Item item = itemRepository.findById(newItem.getId())
-                .orElseThrow(() -> new DataNotFoundException("Item with id = " + newItem.getId() + " not found"));
-
-        if (newItem.getName() != null) {
-            item.setName(newItem.getName());
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
         }
 
-        if (newItem.getDescription() != null) {
-            item.setDescription(newItem.getDescription());
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
         }
 
-        if (newItem.getAvailable() != null) {
-            item.setAvailable(newItem.getAvailable());
+        if (itemDto.getAvailable() != null) {
+            item.setAvailable(itemDto.getAvailable());
         }
 
         return ItemMapper.toItemDto(itemRepository.save(item));

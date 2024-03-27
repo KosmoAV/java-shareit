@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
+import ru.practicum.shareit.request.model.Request;
 
 import javax.persistence.*;
 
@@ -25,8 +26,9 @@ public class Item {
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
 
-    @Column(name = "request_id")
-    private Long requestId = null;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    private Request request;
 
     @Override
     public boolean equals(Object o) {
