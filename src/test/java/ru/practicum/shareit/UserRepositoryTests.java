@@ -29,6 +29,7 @@ public class UserRepositoryTests {
         user.setName("Alex");
         user.setEmail("Kosmo@poza.com");
     }
+
     @Test
     void saveUserTest() throws Exception {
 
