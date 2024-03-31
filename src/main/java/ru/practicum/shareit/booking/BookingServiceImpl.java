@@ -86,22 +86,7 @@ public class BookingServiceImpl implements BookingService {
 
         State state = getState(stringState);
 
-        PageRequest page;
-
-        if (from == null || size == null) {
-            page = PageRequest.of(0, Integer.MAX_VALUE);
-        } else {
-
-            if (size < 1) {
-                throw new DataBadRequestException("Parameter 'size' in method getAllBooking mast be > 0");
-            }
-
-            if (from < 0) {
-                throw new DataBadRequestException("Parameter 'from' in method getAllBooking mast be >= 0");
-            }
-
-            page = PageRequest.of(from > 0 ? from / size : 0, size);
-        }
+        PageRequest page = getPage(from, size);
 
         getUser(bookerId);
 
@@ -143,22 +128,7 @@ public class BookingServiceImpl implements BookingService {
 
         State state = getState(stringState);
 
-        PageRequest page;
-
-        if (from == null || size == null) {
-            page = PageRequest.of(0, Integer.MAX_VALUE);
-        } else {
-
-            if (size < 1) {
-                throw new DataBadRequestException("Parameter 'size' in method getAllOwnerBooking mast be > 0");
-            }
-
-            if (from < 0) {
-                throw new DataBadRequestException("Parameter 'from' in method getAllOwnerBooking mast be >= 0");
-            }
-
-            page = PageRequest.of(from > 0 ? from / size : 0, size);
-        }
+        PageRequest page = getPage(from, size);
 
         getUser(ownerId);
 
@@ -167,24 +137,24 @@ public class BookingServiceImpl implements BookingService {
         switch (state) {
             case CURRENT:
                 bookingList = bookingRepository.findByItemOwnerIdWithCurrentState(ownerId, page).getContent();
-                break;
+            break;
             case PAST:
                 bookingList = bookingRepository.findByItemOwnerIdWithPastState(ownerId, page).getContent();
-                break;
+            break;
             case FUTURE:
                 bookingList = bookingRepository.findByItemOwnerIdWithFutureState(ownerId, page).getContent();
-                break;
+            break;
             case WAITING:
                 bookingList = bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(ownerId,
                         Status.WAITING, page).getContent();
-                break;
+            break;
             case REJECTED:
                 bookingList = bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(ownerId,
                         Status.REJECTED, page).getContent();
-                break;
+            break;
             default:
                 bookingList = bookingRepository.findByItemOwnerIdOrderByStartDesc(ownerId, page).getContent();
-                break;
+            break;
         }
 
         return BookingMapper.toResponseBookingDto(bookingList);
@@ -227,11 +197,37 @@ public class BookingServiceImpl implements BookingService {
 
     private State getState(String state) {
 
+        if (state == null) {
+            return null;
+        }
+
         try {
             return State.valueOf(state);
 
         } catch (IllegalArgumentException e) {
             throw new DataBadRequestException("Unknown state: " + state, e.getMessage());
         }
+    }
+
+    private PageRequest getPage(Integer from, Integer size) {
+
+        PageRequest page;
+
+        if (from == null || size == null) {
+            page = PageRequest.of(0, Integer.MAX_VALUE);
+        } else {
+
+            if (size < 1) {
+                throw new DataBadRequestException("Parameter 'size' in method getAllOwnerBooking mast be > 0");
+            }
+
+            if (from < 0) {
+                throw new DataBadRequestException("Parameter 'from' in method getAllOwnerBooking mast be >= 0");
+            }
+
+            page = PageRequest.of(from > 0 ? from / size : 0, size);
+        }
+
+        return page;
     }
 }
