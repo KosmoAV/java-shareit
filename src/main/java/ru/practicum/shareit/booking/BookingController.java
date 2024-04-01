@@ -9,6 +9,8 @@ import ru.practicum.shareit.booking.dto.ResponseBookingDto;
 import ru.practicum.shareit.booking.interfaces.BookingService;
 import ru.practicum.shareit.group.OnPost;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
@@ -54,8 +56,8 @@ public class BookingController {
     @GetMapping()
     List<ResponseBookingDto> getAllBooking(@RequestHeader("X-Sharer-User-Id") @Positive long userId,
                                            @RequestParam(defaultValue = "ALL") String state,
-                                           @RequestParam(required = false) Integer from,
-                                           @RequestParam(required = false) Integer size) {
+                                           @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                           @RequestParam(defaultValue = "50") @Min(1) @Max(100) Integer size) {
 
         log.info("Call 'getAllBooking': userId = {}, state = {}, from = {}, size = {}", userId, state, from, size);
 
@@ -65,8 +67,8 @@ public class BookingController {
     @GetMapping("/owner")
     List<ResponseBookingDto> getAllOwnerBooking(@RequestHeader("X-Sharer-User-Id") @Positive long ownerId,
                                                 @RequestParam(defaultValue = "ALL") String state,
-                                                @RequestParam(required = false) Integer from,
-                                                @RequestParam(required = false) Integer size) {
+                                                @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                @RequestParam(defaultValue = "50") @Min(1) @Max(100) Integer size) {
 
         log.info("Call 'getAllBooking': ownerId = {}, state = {}, from = {}, size = {}", ownerId, state, from, size);
 

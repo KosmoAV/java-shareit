@@ -86,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
 
         State state = getState(stringState);
 
-        PageRequest page = getPage(from, size);
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
 
         getUser(bookerId);
 
@@ -128,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
 
         State state = getState(stringState);
 
-        PageRequest page = getPage(from, size);
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
 
         getUser(ownerId);
 
@@ -207,27 +207,5 @@ public class BookingServiceImpl implements BookingService {
         } catch (IllegalArgumentException e) {
             throw new DataBadRequestException("Unknown state: " + state, e.getMessage());
         }
-    }
-
-    private PageRequest getPage(Integer from, Integer size) {
-
-        PageRequest page;
-
-        if (from == null || size == null) {
-            page = PageRequest.of(0, Integer.MAX_VALUE);
-        } else {
-
-            if (size < 1) {
-                throw new DataBadRequestException("Parameter 'size' in method getAllOwnerBooking mast be > 0");
-            }
-
-            if (from < 0) {
-                throw new DataBadRequestException("Parameter 'from' in method getAllOwnerBooking mast be >= 0");
-            }
-
-            page = PageRequest.of(from > 0 ? from / size : 0, size);
-        }
-
-        return page;
     }
 }
