@@ -30,5 +30,5 @@ public class ItemDto {
     @Positive(groups = {OnPost.class, OnPatch.class})
     private Long owner;
 
-    private Long request = null;
+    private Long requestId;
 }
